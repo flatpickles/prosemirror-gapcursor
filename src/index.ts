@@ -48,7 +48,9 @@ function arrow(axis: "vert" | "horiz", dir: number): Command {
       $start = state.doc.resolve(dir > 0 ? $start.after() : $start.before())
     }
     let $found = GapCursor.findGapCursorFrom($start, dir, mustMove)
-    if (!$found) return false
+    let selCanMove = sel.$from.pos + dir > 0 && sel.$to.pos + dir < state.doc.nodeSize - 1
+    let handled = sel instanceof GapCursor && !selCanMove
+    if (!$found) return handled
     if (dispatch) dispatch(state.tr.setSelection(new GapCursor($found)))
     return true
   }
